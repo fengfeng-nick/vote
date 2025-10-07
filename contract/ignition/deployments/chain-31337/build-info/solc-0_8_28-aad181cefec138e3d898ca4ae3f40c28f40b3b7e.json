@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-aad181cefec138e3d898ca4ae3f40c28f40b3b7e",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/Vote.sol": "project/contracts/Vote.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/Vote.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.28;\n\ncontract Vote {\n    struct Proposal {\n        string title;\n        string description;\n        string[] options;\n        uint256 startTime;\n        uint256 endTime;\n        bool exists;\n    }\n\n    Proposal[] public proposals;\n\n    mapping(uint256 => mapping(uint256 => uint256)) public votes; // proposalIndex => optionIndex => voteCount\n    mapping(uint256 => mapping(address => bool)) public isVoted; // proposalIndex => address => isVoted\n\n    address public admin;\n\n    constructor() {\n        admin = msg.sender;\n    }\n\n    modifier onlyAdmin() {\n        require(msg.sender == admin, \"Not admin\");\n        _;\n    }\n\n    function createProposal(\n        string memory _title,\n        string memory _description,\n        string[] memory _options\n    ) public onlyAdmin {\n        require(_options.length > 1, \"Need at least 2 options\");\n\n        proposals.push(\n            Proposal({\n                title: _title,\n                description: _description,\n                options: _options,\n                startTime: block.timestamp,\n                endTime: block.timestamp + 1 days,\n                exists: true\n            })\n        );\n    }\n\n    function getProposals() public view returns (Proposal[] memory) {\n        return proposals;\n    }\n\n    function vote(\n        address voter,\n        uint256 proposalIndex,\n        uint256 optionIndex\n    ) external {\n        require(proposalIndex < proposals.length, \"Invalid proposal index\");\n        require(\n            optionIndex < proposals[proposalIndex].options.length,\n            \"Invalid option index\"\n        );\n        require(!isVoted[proposalIndex][voter], \"Already voted\");\n        isVoted[proposalIndex][voter] = true;\n        votes[proposalIndex][optionIndex]++;\n    }\n\n    // 获取某个 proposal 的投票结果\n    function getProposalResult(\n        uint256 proposalIndex\n    ) public view returns (uint256[] memory) {\n        require(proposalIndex < proposals.length, \"Invalid proposal index\");\n        uint256[] memory result = new uint256[](\n            proposals[proposalIndex].options.length\n        );\n        for (uint256 i = 0; i < proposals[proposalIndex].options.length; i++) {\n            result[i] = votes[proposalIndex][i];\n        }\n        return result;\n    }\n\n    // 获取用户对某个 proposal 的投票状态\n    function getUserVoteStatus(\n        uint256 proposalIndex,\n        address user\n    ) public view returns (bool) {\n        return isVoted[proposalIndex][user];\n    }\n}\n"
+      }
+    }
+  }
+}
