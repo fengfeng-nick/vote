@@ -3,6 +3,7 @@
 import { createContext, useContext } from "react"
 
 export interface Props {
+    proposalIndex: number
     title: string
     description: string
     options: string[]

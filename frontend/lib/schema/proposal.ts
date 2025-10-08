@@ -10,3 +10,11 @@ export const proposalSchema = z.object({
 })
 
 export type Proposal = z.infer<typeof proposalSchema>
+
+export const proposalResultSchema = z.array(z.bigint())
+
+export type ProposalResult = z.infer<typeof proposalResultSchema>
+
+export const userVoteStatusSchema = z.boolean()
+
+export type UserVoteStatus = z.infer<typeof userVoteStatusSchema>

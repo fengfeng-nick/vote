@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { JSX } from "react"
 import { useProps } from "./context"
+import { Vote } from "./vote"
 
 export function Render(): JSX.Element {
     const { title, description, options, startTime, endTime } = useProps()
@@ -11,11 +12,7 @@ export function Render(): JSX.Element {
                 <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent>
-                <div>
-                    {options.map((option, index) => (
-                        <div key={index}>{option}</div>
-                    ))}
-                </div>
+                <Vote />
             </CardContent>
         </Card>
     )

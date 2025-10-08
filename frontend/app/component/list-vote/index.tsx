@@ -46,7 +46,7 @@ export function ListVote({ className }: Props): JSX.Element {
     return (
         <div className={cn(className, "space-y-4")}>
             {proposals.map((item, index) => (
-                <CardVote key={index} {...item} />
+                <CardVote key={index} {...item} proposalIndex={index}/>
             ))}
         </div>
     )
